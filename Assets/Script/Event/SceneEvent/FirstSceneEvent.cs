@@ -11,4 +11,9 @@ public class FirstSceneEvent : MonoBehaviour
     {
         house.SetActive(true);
     }
+
+    private void OnDestroy()
+    {
+        EventCenter.Unsubscribe("OnEnemyOneDeath", HouseAppear);
+    }
 }

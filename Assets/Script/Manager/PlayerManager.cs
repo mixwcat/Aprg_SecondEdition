@@ -15,5 +15,6 @@ public class PlayerManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        player = FindAnyObjectByType<Player>();
     }
 }

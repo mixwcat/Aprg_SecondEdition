@@ -47,6 +47,10 @@ public class Player : Entity
     public float attackVelocityDuration = 0.5f; // 攻击位移持续时间
     public bool isNextAttackQueued { get; set; } = false; // 是否有下一个攻击被排队
 
+    [Header("攻击的摄像机效果")]
+    [SerializeField] private float shakeDuration = 0.2f;
+    [SerializeField] private float shakeStrength = 0.1f;
+    [SerializeField] private int HitPauseDuration = 5;
 
     #endregion
 
@@ -65,19 +69,16 @@ public class Player : Entity
         defendState = new PlayerDefendState(stateMachine, this, "Defending");
         onDefendedState = new PlayerOnDefendedState(stateMachine, this, "OnDefended");
 
-        //获取组件
+        // 获取组件
         playerStats = GetComponent<PlayerCharacterStats>();
         inputActions = GetComponent<PlayerInputActions>();
-        PlayerManager.Instance.player = this;
-
-        //订阅移动事件，获取Vector
-        //EventCenter.Subscribe("OnPlayerMove", OnMoveInput);
     }
 
 
     protected override void Start()
     {
         base.Start();
+        facingDir = 1;
 
         // 初始化状态机
         stateMachine.Initialized(idleState);
@@ -136,8 +137,20 @@ public class Player : Entity
 
     public void OnDestroy()
     {
-        // 清理状态机
-        stateMachine.currentState.Exit();
+        if (stateMachine != null && stateMachine.currentState != null)
+        {
+            stateMachine.currentState.Exit();
+        }
+        else
+        {
+            Debug.LogWarning("StateMachine or currentState is null during OnDestroy.");
+        }
+    }
+
+    private void CameraEffects()
+    {
+        CameraController.Instance.ShakeCamera(shakeDuration, shakeStrength);
+        CameraController.Instance.HitPause(HitPauseDuration);
     }
 
 
@@ -147,8 +160,20 @@ public class Player : Entity
         {
             Enemyone_CharacterStats enemyStats = collision.GetComponent<Enemyone_CharacterStats>();
             playerStats.DoDamage(enemyStats);
+            EventCenter.Trigger("OnEnemyOneHurt", null);
+            CameraEffects();
         }
     }
     #endregion
-
 }
+
+// public class DamageInfo
+// {
+//     public int Damage { get; set; }
+
+
+//     public DamageInfo(int damage)
+//     {
+//         Damage = damage;
+//     }
+// }

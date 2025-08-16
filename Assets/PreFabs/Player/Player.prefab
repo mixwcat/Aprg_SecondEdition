@@ -162,11 +162,16 @@ MonoBehaviour:
   dashDuration: 0.1
   dashTimer: 0
   jumpForce: 5
+  isDefending: 0
+  isDefendSucceed: 0
   comboResetTime: 1
   attackVelocity:
   - {x: 1, y: 0}
   - {x: 10, y: 0}
   attackVelocityDuration: 0.05
+  shakeDuration: 0.1
+  shakeStrength: 0.08
+  HitPauseDuration: 2
 --- !u!114 &5482961505477271564
 MonoBehaviour:
   m_ObjectHideFlags: 0

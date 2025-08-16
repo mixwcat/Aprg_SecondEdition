@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerInputActions : MonoBehaviour
 {
@@ -60,22 +61,47 @@ public class PlayerInputActions : MonoBehaviour
 
     private void BindKey(object obj)
     {
-        playerInputSystem.Player.Dash.performed += ctx => EventCenter.Trigger("OnPlayerDash");
-        playerInputSystem.Player.Jump.performed += ctx => EventCenter.Trigger("OnPlayerJump");
-        playerInputSystem.Player.Attack.performed += ctx => EventCenter.Trigger("OnPlayerNextAttackQueued");
-        playerInputSystem.Player.Attack.performed += ctx => EventCenter.Trigger("OnPlayerAttack");
-        playerInputSystem.Player.Defend.performed += ctx => EventCenter.Trigger("OnPlayerDefend");
-        playerInputSystem.Player.Defend.canceled += ctx => EventCenter.Trigger("OnPlayerDefendExit");
+        playerInputSystem.Player.Dash.performed += OnDashPerformed;
+        playerInputSystem.Player.Jump.performed += OnJumpPerformed;
+        playerInputSystem.Player.Attack.performed += OnAttackPerformed;
+        playerInputSystem.Player.Defend.performed += OnDefendPerformed;
+        playerInputSystem.Player.Defend.canceled += OnDefendCanceled;
     }
 
     private void DisBindKey(object obj)
     {
-        playerInputSystem.Player.Dash.performed -= ctx => EventCenter.Trigger("OnPlayerDash");
-        playerInputSystem.Player.Jump.performed -= ctx => EventCenter.Trigger("OnPlayerJump");
-        playerInputSystem.Player.Attack.performed -= ctx => EventCenter.Trigger("OnPlayerNextAttackQueued");
-        playerInputSystem.Player.Attack.performed -= ctx => EventCenter.Trigger("OnPlayerAttack");
-        playerInputSystem.Player.Defend.performed -= ctx => EventCenter.Trigger("OnPlayerDefend");
-        playerInputSystem.Player.Defend.canceled -= ctx => EventCenter.Trigger("OnPlayerDefendExit");
+        playerInputSystem.Player.Dash.performed -= OnDashPerformed;
+        playerInputSystem.Player.Jump.performed -= OnJumpPerformed;
+        playerInputSystem.Player.Attack.performed -= OnAttackPerformed;
+        playerInputSystem.Player.Defend.performed -= OnDefendPerformed;
+        playerInputSystem.Player.Defend.canceled -= OnDefendCanceled;
+    }
+
+    // 显式定义的事件处理方法
+    private void OnDashPerformed(InputAction.CallbackContext ctx)
+    {
+        EventCenter.Trigger("OnPlayerDash");
+    }
+
+    private void OnJumpPerformed(InputAction.CallbackContext ctx)
+    {
+        EventCenter.Trigger("OnPlayerJump");
+    }
+
+    private void OnAttackPerformed(InputAction.CallbackContext ctx)
+    {
+        EventCenter.Trigger("OnPlayerNextAttackQueued");
+        EventCenter.Trigger("OnPlayerAttack");
+    }
+
+    private void OnDefendPerformed(InputAction.CallbackContext ctx)
+    {
+        EventCenter.Trigger("OnPlayerDefend");
+    }
+
+    private void OnDefendCanceled(InputAction.CallbackContext ctx)
+    {
+        EventCenter.Trigger("OnPlayerDefendExit");
     }
     #endregion
 
